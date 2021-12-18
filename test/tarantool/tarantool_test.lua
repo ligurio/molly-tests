@@ -3,12 +3,14 @@ local fio = require('fio')
 local net_box = require('net.box')
 local log = require('log')
 
-local jepsen = require('ljepsen')
-local gen = require('ljepsen.gen')
+local ljepsen = require('ljepsen')
+local gen = ljepsen.gen
+local runner = ljepsen.runner
+
 local helpers = require('test.helper')
 
-local bank_client = require('test.integration.tarantool_bank_client')
-local cas_register_client = require('test.integration.tarantool_cas_register_client')
+local bank = require('test.tarantool.tarantool_bank_client')
+local cas_register = require('test.tarantool.tarantool_cas_register_client')
 
 local t = require('luatest')
 local g = t.group()
@@ -55,16 +57,16 @@ g.after_each(function()
 end)
 
 g.test_bank = function()
-    local read = bank_client.ops.read
-    local transfer = bank_client.ops.transfer
+    local read = bank.ops.read
+    local transfer = bank.ops.transfer
     local test_options = {
         threads = 5,
         nodes = {
             '127.0.0.1:3301',
         },
     }
-    local ok, err = jepsen.run_test({
-        client = bank_client.client,
+    local ok, err = runner.run_test({
+        client = bank.client,
         generator = gen.cycle(gen.iter({ read(), transfer() })):take(10^3),
     }, test_options)
     log.info('Random seed: %s', seed)
@@ -73,9 +75,9 @@ g.test_bank = function()
 end
 
 g.test_cas_register = function()
-    local r = cas_register_client.ops.r
-    local w = cas_register_client.ops.w
-    local cas = cas_register_client.ops.cas
+    local r = cas_register.ops.r
+    local w = cas_register.ops.w
+    local cas = cas_register.ops.cas
     local test_options = {
         threads = 5,
         nodes = {
@@ -84,8 +86,8 @@ g.test_cas_register = function()
             '127.0.0.1:3301',
         },
     }
-    local ok, err = jepsen.run_test({
-        client = cas_register_client.client,
+    local ok, err = runner.run_test({
+        client = cas_register.client,
         generator = gen.cycle(gen.iter({ r, w, cas, })):take(1000),
     }, test_options)
     log.info('Random seed: %s', seed)
