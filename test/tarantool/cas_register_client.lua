@@ -1,3 +1,5 @@
+-- ljepsen client with read, write and CAS operations.
+
 local dev_checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')

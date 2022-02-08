@@ -14,6 +14,7 @@ local helpers = require('helper')
 
 local bank = require('tarantool.bank_client')
 local cas_register = require('tarantool.cas_register_client')
+local rw_register = require('tarantool.rw_register_client')
 
 local t = require('luatest')
 local g = t.group()
@@ -92,6 +93,25 @@ g.test_cas_register = function()
     local ok, err = runner.run_test({
         client = cas_register.client,
         generator = gen.cycle(gen.iter({ r, w, cas, })):take(1000),
+    }, test_options)
+    log.info('Random seed: %s', seed)
+
+    t.assert_equals(err, nil)
+    t.assert_equals(ok, true)
+end
+
+g.test_rw_register_memcached = function()
+    local r = rw_register.ops.r
+    local w = rw_register.ops.w
+    local test_options = {
+        threads = 5,
+        nodes = {
+            '127.0.0.1:11211',
+        },
+    }
+    local ok, err = runner.run_test({
+        client = rw_register.client,
+        generator = gen.cycle(gen.iter({ r, w })):take(1000),
     }, test_options)
     log.info('Random seed: %s', seed)
 
