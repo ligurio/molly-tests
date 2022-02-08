@@ -1,42 +1,39 @@
-local dev_checks = require('checks')
+local checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')
 
-local client = require('ljepsen.client')
+local ljepsen = require('ljepsen')
 
-local function r()
+local client = ljepsen.client
+local space_name = 'bank_space'
+local accounts = 10
+local total_amount = 100
+
+local function read()
     return {
         f = 'read',
         v = nil,
     }
 end
 
-local function w()
+local function transfer()
     return {
-        f = 'write',
-        v = math.random(1, 10),
-    }
-end
-
-local function cas()
-    return {
-        f = 'cas',
+        f = 'transfer',
         v = {
-            math.random(1, 10), -- Old value.
-            math.random(1, 10), -- New value.
-        },
+            from = math.random(1, accounts),
+            to = math.random(1, accounts),
+            amount = math.random(1, total_amount),
+        }
     }
 end
-
-local space_name = 'register_space'
 
 local cl = client.new()
 
 cl.open = function(self, addr)
-    dev_checks('table', 'string')
+    checks('table', 'string')
 
     rawset(self, 'addr', addr)
-    local conn = net_box.connect(addr)
+    local conn = net_box.connect(self.addr)
     if conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -48,19 +45,26 @@ cl.open = function(self, addr)
 end
 
 cl.setup = function(self)
-    dev_checks('table')
+    checks('table')
 
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
+    end
+
+    local space = self.conn.space[space_name]
+    assert(space ~= nil)
+    print('Populating account')
+    for a = 1, accounts do
+        local sum = math.random(1, 100)
+        total_amount = total_amount - sum
+        space:insert({a, sum})
     end
 
     return true
 end
 
 cl.invoke = function(self, op)
-    -- TODO: try async mode in net_box module
-    -- https://www.tarantool.io/en/doc/latest/reference/reference_lua/net_box/#lua-function.conn.request
-    dev_checks('table', {
+    checks('table', {
         f = 'string',
         v = '?',
         process = '?number',
@@ -71,38 +75,32 @@ cl.invoke = function(self, op)
         error(string.format('No connection to %s', self.addr))
     end
 
-    local tuple_id = 1
     local space = self.conn.space[space_name]
-    assert(space ~= nil)
-    local tuple_value
-    local state
-    if op.f == 'write' then
-        tuple_value = space:replace({tuple_id, op.v}, {timeout = 0.05})
-        tuple_value = tuple_value.value
-        state = true
-    elseif op.f == 'read' then
-        tuple_value = space:get(tuple_id, {timeout = 0.05})
-        if tuple_value ~= nil then
-            tuple_value = tuple_value.value
-        end
-        state = true
-    elseif op.f == 'cas' then
-        local old_value = op.v[1]
-        local new_value = op.v[2]
-        tuple_value, state = self.conn:call('cas', {
+    local state = false
+    local v = op.v
+    if op.f == 'transfer' then
+        local from = v.from
+        local to = v.to
+        local amount = v.amount
+        state = self.conn:call('withdraw', {
             space_name,
-            tuple_id,
-            old_value,
-            new_value
-        }, {
-            timeout = 0.5
+            from,
+            to,
+            amount
         })
+    elseif op.f == 'read' then
+        -- FIXME
+        v = space:get(1, {timeout = 0.05})
+        if v ~= nil then
+            v = v.value
+            state = true
+        end
     else
         error(string.format('Unknown operation (%s)', op.f))
     end
 
     return {
-        v = tuple_value,
+        v = v,
         f = op.f,
         process = op.process,
         time = op.time,
@@ -111,7 +109,7 @@ cl.invoke = function(self, op)
 end
 
 cl.teardown = function(self)
-    dev_checks('table')
+    checks('table')
 
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
@@ -121,7 +119,7 @@ cl.teardown = function(self)
 end
 
 cl.close = function(self)
-    dev_checks('table')
+    checks('table')
 
     if self.conn:ping() == true then
         self.conn:close()
@@ -133,8 +131,7 @@ end
 return {
     client = cl,
     ops = {
-       r = r,
-       w = w,
-       cas = cas,
+       read = read,
+       transfer = transfer,
     }
 }

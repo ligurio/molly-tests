@@ -1,7 +1,7 @@
---- Helpers for integration testing.
+--- Helpers for integration tests.
 -- This module extends `luatest.helpers` with additional helpers.
 --
--- @module topology.test-helpers
+-- @module test.test-helpers
 -- @alias helpers
 
 local luatest = require('luatest')

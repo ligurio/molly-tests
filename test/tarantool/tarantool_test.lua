@@ -7,10 +7,13 @@ local ljepsen = require('ljepsen')
 local gen = ljepsen.gen
 local runner = ljepsen.runner
 
-local helpers = require('test.helper')
+local cur_dir = fio.pathjoin(fio.dirname(debug.sourcedir()), '?.lua')
+package.path = package.path .. ';' .. cur_dir
 
-local bank = require('test.tarantool.tarantool_bank_client')
-local cas_register = require('test.tarantool.tarantool_cas_register_client')
+local helpers = require('helper')
+
+local bank = require('tarantool.bank_client')
+local cas_register = require('tarantool.cas_register_client')
 
 local t = require('luatest')
 local g = t.group()
