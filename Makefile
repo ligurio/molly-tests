@@ -7,7 +7,7 @@ PROJECT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
 ROCKS_BIN_DIR := $(tarantoolctl rocks config deploy_bin_dir)
 ROCKS_BIN_DIR = $(PROJECT_DIR)/.rocks/bin/
 
-all:
+all: test
 
 deps:
 	@tarantoolctl rocks install luacheck 0.25.0
@@ -20,7 +20,7 @@ luacheck:
 	@luacheck --config $(PROJECT_DIR)/.luacheckrc --codes $(PROJECT_DIR)
 
 test:
-	@${ROCKS_BIN_DIR}/luatest test/
+	@${ROCKS_BIN_DIR}/luatest --verbose -c test/
 
 clean:
 	@rm -f ${CLEANUP_FILES}
