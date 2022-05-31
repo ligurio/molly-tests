@@ -1,12 +1,12 @@
--- ljepsen client with read and transfer operations for bank test.
+-- Molly client with read and transfer operations for bank test.
 
 local checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')
 
-local ljepsen = require('ljepsen')
+local molly = require('molly')
 
-local client = ljepsen.client
+local client = molly.client
 local space_name = 'bank_space'
 local accounts = 10
 local total_amount = 100

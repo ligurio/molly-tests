@@ -1,11 +1,11 @@
--- ljepsen client with read, write and CAS operations.
+-- Molly client with read, write and CAS operations.
 
 local dev_checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')
-local ljepsen = require('ljepsen')
+local molly = require('molly')
 
-local client = ljepsen.client
+local client = molly.client
 
 local function r()
     return {

@@ -3,9 +3,9 @@ local fio = require('fio')
 local net_box = require('net.box')
 local log = require('log')
 
-local ljepsen = require('ljepsen')
-local gen = ljepsen.gen
-local runner = ljepsen.runner
+local molly = require('molly')
+local gen = molly.gen
+local runner = molly.runner
 
 local cur_dir = fio.pathjoin(fio.dirname(debug.sourcedir()), '?.lua')
 package.path = package.path .. ';' .. cur_dir

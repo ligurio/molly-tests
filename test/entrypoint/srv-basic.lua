@@ -5,7 +5,7 @@ local listen = os.getenv('TARANTOOL_LISTEN')
 
 box.cfg({
     feedback_enabled = false,
-    custom_proc_title = 'jepsen',
+    custom_proc_title = 'molly',
     listen = listen,
     log_level = 6,
     memtx_memory = 1024*1024*1024,
@@ -47,7 +47,7 @@ local function bootstrap()
     box.schema.user.grant('guest', 'write', 'space', '_space')
 end
 
-box.once('ljepsen', bootstrap)
+box.once('molly', bootstrap)
 
 -- Function implements a CAS (Compare And Set) operation, which takes a key,
 -- old value, and new value and sets the key to the new value if and only if
