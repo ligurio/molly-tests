@@ -26,7 +26,7 @@ jobs:
       - name: Setup dependencies
         run: make deps
 
-      - run: echo $(luarocks path --lr-bin) >> $GITHUB_PATH
+      - run: echo $(tarantoolctl rocks config deploy_bin_dir) >> $GITHUB_PATH
 
       - name: Run static analysis
         run: make check
