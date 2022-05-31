@@ -1,4 +1,4 @@
--- Molly client with read and write operations for memcached.
+-- Molly client with read and write operations.
 
 local dev_checks = require('checks')
 local math = require('math')

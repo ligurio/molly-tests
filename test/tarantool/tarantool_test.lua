@@ -86,8 +86,6 @@ g.test_cas_register = function()
         threads = 5,
         nodes = {
             '127.0.0.1:3301',
-            '127.0.0.1:3301',
-            '127.0.0.1:3301',
         },
     }
     local ok, err = runner.run_test({

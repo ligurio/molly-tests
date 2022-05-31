@@ -5,10 +5,9 @@ local listen = os.getenv('TARANTOOL_LISTEN')
 
 box.cfg({
     feedback_enabled = false,
-    custom_proc_title = 'molly',
     listen = listen,
     log_level = 6,
-    memtx_memory = 1024*1024*1024,
+    memtx_memory = 1024 * 1024 * 1024,
     net_msg_max = 2 * 1024,
     work_dir = workdir,
     iproto_threads = 2,
@@ -68,9 +67,9 @@ function cas(space_name, tuple_id, old_value, new_value) -- luacheck: no global
     return tuple.value, true
 end
 
--- Function returns IP address of a node where current leader of synchronous
+-- Function returns IP address of the node where current leader of synchronous
 -- cluster with enabled Raft consensus protocol is started.
--- Returns nil when Raft is disabled.
+-- Returns nil when Raft is disabled and a string otherwise.
 function leader_ipaddr() -- luacheck: no global
     local leader_id = box.info.election.leader
     if leader_id == 0 or leader_id == nil then
