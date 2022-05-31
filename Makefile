@@ -9,6 +9,7 @@ all: check
 deps:
 	@tarantoolctl rocks install luacheck 0.25.0
 	@tarantoolctl rocks install luatest
+	@tarantoolctl rocks install https://raw.githubusercontent.com/ligurio/molly/dev/molly-scm-1.rockspec
 
 check: luacheck
 
