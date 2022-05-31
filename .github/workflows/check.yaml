@@ -15,6 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Setup Tarantool
+        uses: tarantool/setup-tarantool@v1
+        with:
+          tarantool-version: 2.10
+
       - name: Setup luarocks
         run: sudo apt install -y luarocks
 
