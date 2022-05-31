@@ -4,7 +4,10 @@
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 PROJECT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
 
-all: check
+ROCKS_BIN_DIR := $(tarantoolctl rocks config deploy_bin_dir)
+ROCKS_BIN_DIR = $(PROJECT_DIR)/.rocks/bin/
+
+all:
 
 deps:
 	@tarantoolctl rocks install luacheck 0.25.0
@@ -16,7 +19,10 @@ check: luacheck
 luacheck:
 	@luacheck --config $(PROJECT_DIR)/.luacheckrc --codes $(PROJECT_DIR)
 
+test:
+	@${ROCKS_BIN_DIR}/luatest test/
+
 clean:
 	@rm -f ${CLEANUP_FILES}
 
-.PHONY: luacheck check deps clean
+.PHONY: luacheck check deps clean test
