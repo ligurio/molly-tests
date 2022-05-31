@@ -2,6 +2,8 @@
 
 local workdir = os.getenv('TARANTOOL_WORKDIR')
 local listen = os.getenv('TARANTOOL_LISTEN')
+local qsync_quorum = os.getenv('TARANTOOL_QUORUM')
+local qsync_peers = os.getenv('TARANTOOL_PEERS')
 
 box.cfg({
     feedback_enabled = false,
@@ -13,17 +15,15 @@ box.cfg({
     iproto_threads = 2,
 })
 
---[[
-if replication == true then
+if qsync_peers and qsync_quorum then
     box.cfg.election_mode = 'candidate'
     box.cfg.election_timeout = 0.5
     box.cfg.memtx_use_mvcc_engine = true
-    box.cfg.replication_synchro_quorum = %TARANTOOL_QUORUM%
+    box.cfg.replication_synchro_quorum = qsync_quorum
     box.cfg.replication_synchro_timeout = 0.2
-    box.cfg.replication = { %TARANTOOL_REPLICATION% }
+    box.cfg.replication = { qsync_peers }
     box.cfg.replication_timeout = 1
 end
-]]
 
 local function bootstrap()
     local space = box.schema.space.create('register_space')
