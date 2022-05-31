@@ -20,13 +20,11 @@ jobs:
         with:
           tarantool-version: 2.10
 
-      - name: Setup luarocks
-        run: sudo apt install -y luarocks
-
-      - name: Setup dependencies
+      - name: Setup Lua rocks dependencies
         run: make deps
 
-      - run: echo $(tarantoolctl rocks config deploy_bin_dir) >> $GITHUB_PATH
+      #- run: echo $(tarantoolctl rocks config deploy_bin_dir) >> $GITHUB_PATH
+      - run: echo .rocks/bin >> $GITHUB_PATH
 
       - name: Run static analysis
         run: make check
