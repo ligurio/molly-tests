@@ -19,7 +19,6 @@ ignore = {
 
 include_files = {
     '.luacheckrc',
-    '*.rockspec',
     '**/*.lua',
 }
 
