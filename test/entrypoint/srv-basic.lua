@@ -127,12 +127,3 @@ function withdraw_multitable(space_name_source, space_name_dest, amount) -- luac
 
     return true
 end
-
--- Function implements a UPSERT operation, which takes a key and value and sets
--- the key to the value if key exists or insert new key with that value.
-function upsert(conn, space_name, tuple_id, value) -- luacheck: no global
-    local space = conn.space[space_name]
-    space:upsert({tuple_id, value}, {{'=', 2, value}})
-
-    return true
-end
