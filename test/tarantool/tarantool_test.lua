@@ -1,4 +1,3 @@
-local fiber = require('fiber')
 local fio = require('fio')
 local net_box = require('net.box')
 
@@ -13,7 +12,6 @@ local helpers = require('helper')
 
 local bank = require('tarantool.bank_client')
 local cas_register = require('tarantool.cas_register_client')
-local rw_register = require('tarantool.rw_register_client')
 
 local t = require('luatest')
 local g = t.group()
