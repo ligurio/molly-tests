@@ -1,5 +1,6 @@
 local fiber = require('fiber')
 local fio = require('fio')
+local net_box = require('net.box')
 
 local molly = require('molly')
 local gen = molly.gen
@@ -40,13 +41,15 @@ g.before_each(function()
     local pid = server.process.pid
     t.helpers.retrying(
         {
-            timeout = 0.5,
+            timeout = 1,
         },
         function()
             t.assert(Process.is_pid_alive(pid))
+            local conn = net_box.connect('127.0.0.1:3301')
+            t.assert(conn:is_connected() == true)
+            t.assert(conn:ping() == true)
         end
     )
-    fiber.sleep(0.1) -- FIXME?
 end)
 
 g.after_each(function()
