@@ -1,6 +1,5 @@
 -- Molly client with read and transfer operations for bank test.
 
-local checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')
 
@@ -32,8 +31,6 @@ end
 local cl = client.new()
 
 cl.open = function(self, addr)
-    checks('table', 'string')
-
     rawset(self, 'addr', addr)
     local conn = net_box.connect(self.addr)
     if conn:ping() ~= true then
@@ -47,8 +44,6 @@ cl.open = function(self, addr)
 end
 
 cl.setup = function(self)
-    checks('table')
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -66,13 +61,6 @@ cl.setup = function(self)
 end
 
 cl.invoke = function(self, op)
-    checks('table', {
-        f = 'string',
-        v = '?',
-        process = '?number',
-        time = '?number',
-    })
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -111,8 +99,6 @@ cl.invoke = function(self, op)
 end
 
 cl.teardown = function(self)
-    checks('table')
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -121,8 +107,6 @@ cl.teardown = function(self)
 end
 
 cl.close = function(self)
-    checks('table')
-
     if self.conn:ping() == true then
         self.conn:close()
     end

@@ -1,6 +1,5 @@
 -- Molly client with read, write and CAS operations.
 
-local dev_checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')
 local molly = require('molly')
@@ -36,8 +35,6 @@ local space_name = 'register_space'
 local cl = client.new()
 
 cl.open = function(self, addr)
-    dev_checks('table', 'string')
-
     rawset(self, 'addr', addr)
     local conn = net_box.connect(addr)
     if conn:ping() ~= true then
@@ -51,8 +48,6 @@ cl.open = function(self, addr)
 end
 
 cl.setup = function(self)
-    dev_checks('table')
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -63,13 +58,6 @@ end
 cl.invoke = function(self, op)
     -- TODO: try async mode in net_box module
     -- https://www.tarantool.io/en/doc/latest/reference/reference_lua/net_box/#lua-function.conn.request
-    dev_checks('table', {
-        f = 'string',
-        v = '?',
-        process = '?number',
-        time = '?number',
-    })
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -114,8 +102,6 @@ cl.invoke = function(self, op)
 end
 
 cl.teardown = function(self)
-    dev_checks('table')
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
@@ -124,8 +110,6 @@ cl.teardown = function(self)
 end
 
 cl.close = function(self)
-    dev_checks('table')
-
     if self.conn:ping() == true then
         self.conn:close()
     end
