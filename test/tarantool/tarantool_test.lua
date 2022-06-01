@@ -28,7 +28,7 @@ print(('Random seed: %s'):format(seed))
 local datadir = fio.tempdir()
 
 local server = Server:new({
-    command = helpers.entrypoint('srv-basic'),
+    command = helpers.entrypoint('srv-tarantool'),
     workdir = fio.pathjoin(datadir),
     net_box_port = 3301,
 })
