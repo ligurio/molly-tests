@@ -129,13 +129,13 @@ function Server:wait_election_leader_found()
 end
 
 function Server:wait_election_term(term)
-    return wait_cond('election term', self, self.exec, self, function(term)
+    return wait_cond('election term', self, self.exec, self, function(term) -- luacheck: ignore
         return box.info.election.term >= term
     end, {term})
 end
 
 function Server:wait_synchro_queue_term(term)
-    return wait_cond('synchro queue term', self, self.exec, self, function(term)
+    return wait_cond('synchro queue term', self, self.exec, self, function(term) -- luacheck: ignore
         return box.info.synchro.queue.term >= term
     end, {term})
 end
@@ -229,7 +229,7 @@ end
 
 -- A copy of test_run:grep_log.
 function Server:grep_log(what, bytes, opts)
-    local opts = opts or {}
+    opts = opts or {}
     local noreset = opts.noreset or false
     -- if instance has crashed provide filename to use grep_log
     local filename = opts.filename or self:eval('return box.cfg.log')
@@ -251,7 +251,7 @@ function Server:grep_log(what, bytes, opts)
     if filesize == nil then
         fail("Failed to get log file size")
     end
-    local bytes = bytes or 65536 -- don't read whole log - it can be huge
+    bytes = bytes or 65536 -- don't read whole log - it can be huge
     bytes = bytes > filesize and filesize or bytes
     if file:seek(-bytes, 'SEEK_END') == nil then
         fail("Failed to seek log file")
