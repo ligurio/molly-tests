@@ -19,7 +19,6 @@ local t = require('luatest')
 local g = t.group()
 
 local Process = t.Process
--- https://github.com/tarantool/tarantool/blob/master/test/luatest_helpers/server.lua
 local Server = t.Server
 
 local seed = os.time()
