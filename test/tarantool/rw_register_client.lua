@@ -1,6 +1,5 @@
 -- Molly client with read and write operations.
 
-local dev_checks = require('checks')
 local math = require('math')
 local net_box = require('net.box')
 local molly = require('molly')
@@ -24,8 +23,6 @@ local space_name = 'rw_register_mc'
 local client = molly.client.new()
 
 client.open = function(self, addr)
-    dev_checks('table', 'string')
-
     rawset(self, 'addr', addr)
     local conn = net_box.connect(addr)
     if conn:ping() ~= true then
@@ -37,13 +34,6 @@ client.open = function(self, addr)
 end
 
 client.invoke = function(self, op)
-    dev_checks('table', {
-        f = 'string',
-        v = '?',
-        process = '?number',
-        time = '?number',
-    })
-
     if self.conn:ping() ~= true then
         error(string.format('No connection to %s', self.addr))
     end
