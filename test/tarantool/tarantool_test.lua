@@ -92,20 +92,3 @@ g.test_cas_register = function()
     t.assert_equals(err, nil)
     t.assert_equals(ok, true)
 end
-
-g.test_rw_register_memcached = function()
-    local r = rw_register.ops.r
-    local w = rw_register.ops.w
-    local test_options = {
-        threads = 5,
-        nodes = {
-            '127.0.0.1:11211',
-        },
-    }
-    local ok, err = runner.run_test({
-        client = rw_register.client,
-        generator = gen.cycle(gen.iter({ r, w })):take(1000),
-    }, test_options)
-    t.assert_equals(err, nil)
-    t.assert_equals(ok, true)
-end
