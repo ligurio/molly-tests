@@ -1,7 +1,5 @@
 local fiber = require('fiber')
 local fio = require('fio')
-local net_box = require('net.box')
-local log = require('log')
 
 local molly = require('molly')
 local gen = molly.gen
@@ -25,6 +23,7 @@ local Server = t.Server
 
 local seed = os.time()
 math.randomseed(seed)
+print(('Random seed: %s'):format(seed))
 
 local datadir = fio.tempdir()
 
@@ -48,9 +47,6 @@ g.before_each(function()
         end
     )
     fiber.sleep(0.1) -- FIXME?
-    local conn = net_box.connect('127.0.0.1:3301')
-    t.assert_equals(conn:wait_connected(2), true)
-    t.assert_equals(conn:ping(), true)
 end)
 
 g.after_each(function()
@@ -73,7 +69,6 @@ g.test_bank = function()
         client = bank.client,
         generator = gen.cycle(gen.iter({ read(), transfer() })):take(10^3),
     }, test_options)
-    log.info('Random seed: %s', seed)
     t.assert_equals(err, nil)
     t.assert_equals(ok, true)
 end
@@ -92,8 +87,6 @@ g.test_cas_register = function()
         client = cas_register.client,
         generator = gen.cycle(gen.iter({ r, w, cas, })):take(1000),
     }, test_options)
-    log.info('Random seed: %s', seed)
-
     t.assert_equals(err, nil)
     t.assert_equals(ok, true)
 end
@@ -111,8 +104,6 @@ g.test_rw_register_memcached = function()
         client = rw_register.client,
         generator = gen.cycle(gen.iter({ r, w })):take(1000),
     }, test_options)
-    log.info('Random seed: %s', seed)
-
     t.assert_equals(err, nil)
     t.assert_equals(ok, true)
 end
