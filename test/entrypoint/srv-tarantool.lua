@@ -1,29 +1,23 @@
 #!/usr/bin/env tarantool
 
-local workdir = os.getenv('TARANTOOL_WORKDIR')
-local listen = os.getenv('TARANTOOL_LISTEN')
-local qsync_quorum = os.getenv('TARANTOOL_QUORUM')
-local qsync_peers = os.getenv('TARANTOOL_PEERS')
+local json = require('json')
 
-box.cfg({
-    feedback_enabled = false,
-    listen = listen,
-    log_level = 6,
-    memtx_memory = 1024 * 1024 * 1024,
-    net_msg_max = 2 * 1024,
-    work_dir = workdir,
-    iproto_threads = 2,
-})
-
-if qsync_peers and qsync_quorum then
-    box.cfg.election_mode = 'candidate'
-    box.cfg.election_timeout = 0.5
-    box.cfg.memtx_use_mvcc_engine = true
-    box.cfg.replication_synchro_quorum = qsync_quorum
-    box.cfg.replication_synchro_timeout = 0.2
-    box.cfg.replication = { qsync_peers }
-    box.cfg.replication_timeout = 1
+local cfg = os.getenv('TARANTOOL_BOX_CFG')
+if cfg == nil then
+    cfg = "{}"
 end
+local res = json.decode(cfg)
+assert(type(res) == 'table')
+
+res.work_dir = os.getenv('TARANTOOL_WORKDIR')
+res.listen = os.getenv('TARANTOOL_LISTEN')
+res.feedback_enabled = false
+res.log_level = 6
+res.memtx_memory = 1024 * 1024 * 1024
+res.net_msg_max = 2 * 1024
+res.iproto_threads = 2
+
+box.cfg(res)
 
 local function bootstrap()
     local space = box.schema.space.create('register_space')
@@ -44,6 +38,7 @@ local function bootstrap()
     box.schema.user.grant('guest', 'read,write', 'space', '_index')
     box.schema.user.grant('guest', 'write', 'space', '_schema')
     box.schema.user.grant('guest', 'write', 'space', '_space')
+    box.schema.user.grant('guest', 'super', nil, nil, {if_not_exists = true})
 end
 
 box.once('molly', bootstrap)
@@ -127,3 +122,5 @@ function withdraw_multitable(space_name_source, space_name_dest, amount) -- luac
 
     return true
 end
+
+_G.ready = true
