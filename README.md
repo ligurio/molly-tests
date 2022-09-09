@@ -9,4 +9,8 @@ $ luarocks --local install --server=https://luarocks.org/dev molly
 $ tarantoolctl rocks install luatest
 $ ./.rocks/bin/luatest -v -c test/tarantool/tarantool_test.lua
 $ ./.rocks/bin/luatest -v -c test/tarantool/qsync_test.lua
+$ VER=0.1.4
+$ curl -O -L https://github.com/ligurio/elle-cli/releases/download/${VER}/elle-cli-bin-${VER}.zip
+$ unzip elle-cli-bin-${VER}.zip
+$ java -jar ./target/elle-cli-${VER}-standalone.jar -m elle-rw-register history.json
 ```
