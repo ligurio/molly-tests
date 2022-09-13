@@ -78,6 +78,7 @@ g.test_cas_register = function()
     local w = cas_register.ops.w
     local cas = cas_register.ops.cas
     local test_options = {
+        create_reports = true,
         threads = 5,
         nodes = {
             '127.0.0.1:3301',

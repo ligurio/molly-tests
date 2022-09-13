@@ -104,6 +104,7 @@ pg.test_qsync_bank = function(cg)
     local read = bank.ops.read
     local transfer = bank.ops.transfer
     local test_options = {
+        create_reports = true,
         threads = 5,
         nodes = {
             '127.0.0.1:3301', -- FIXME: should contain Tarantool's IP addresses.
@@ -124,6 +125,7 @@ pg.test_qsync_cas_register = function(cg)
     local cas = cas_register.ops.cas
     local test_options = {
         threads = 5,
+        create_reports = true,
         nodes = {
             '127.0.0.1:3301', -- FIXME: should contain Tarantool's IP addresses.
         },
