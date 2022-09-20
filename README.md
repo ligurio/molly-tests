@@ -18,7 +18,7 @@ OpenJDK 64-Bit Server VM (build 11.0.16+8-post-Ubuntu-0ubuntu122.04, mixed mode,
 $
 $ VER=0.1.4
 $ curl -O -L https://github.com/ligurio/elle-cli/releases/download/${VER}/elle-cli-bin-${VER}.zip
-$ unzip elle-cli-bin-${VER}.zip
-$ java -jar ./target/elle-cli-${VER}-standalone.jar -m cas-register history.json
+$ unzip elle-cli-bin-${VER}.zip -d elle-cli
+$ java -jar ./elle-cli/target/elle-cli-${VER}-standalone.jar -m cas-register history.json
 history.json     true
 ```
