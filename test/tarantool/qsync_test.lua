@@ -89,7 +89,7 @@ pg.test_qsync_basic = function(cg)
     t.assert_equals(cg.master_quorum1:eval('return box.space.test:insert{1}'), {1})
     cg.master_quorum1:eval(('box.cfg{replication = %s}'):format(repl.replication))
     cg.master_quorum2:wait_vclock_of(cg.master_quorum1)
-    t.assert_equals(cg.master_quorum2:eval('return box.space.test:select()'), {{1}})
+    t.assert_equals(cg.master_quorum2:eval('return box.space.test:select({}, {limit = 100})'), {{1}})
 end
 
 pg.test_qsync_bank = function(cg)
@@ -98,7 +98,7 @@ pg.test_qsync_bank = function(cg)
     t.assert_equals(cg.master_quorum1:eval('return box.space.test:insert{1}'), {1})
     cg.master_quorum1:eval(('box.cfg{replication = %s}'):format(repl.replication))
     cg.master_quorum2:wait_vclock_of(cg.master_quorum1)
-    t.assert_equals(cg.master_quorum2:eval('return box.space.test:select()'), {{1}})
+    t.assert_equals(cg.master_quorum2:eval('return box.space.test:select({}, {limit = 100})'), {{1}})
 
     local bank = require('test.tarantool.bank_client')
     local read = bank.ops.read
@@ -118,7 +118,7 @@ pg.test_qsync_bank = function(cg)
     t.assert_equals(ok, true)
 end
 
-pg.test_qsync_cas_register = function(cg)
+pg.test_qsync_cas_register = function(_)
     local cas_register = require('test.tarantool.cas_register_client')
     local r = cas_register.ops.r
     local w = cas_register.ops.w
