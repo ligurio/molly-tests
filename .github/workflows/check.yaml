@@ -18,13 +18,10 @@ jobs:
       - name: Setup Tarantool
         uses: tarantool/setup-tarantool@v1
         with:
-          tarantool-version: 2.10
+          tarantool-version: "2.10"
 
-      - name: Setup Lua rocks dependencies
+      - name: Setup dependencies
         run: make deps
-
-      #- run: echo $(tarantoolctl rocks config deploy_bin_dir) >> $GITHUB_PATH
-      - run: echo .rocks/bin >> $GITHUB_PATH
 
       - name: Run static analysis
         run: make check
