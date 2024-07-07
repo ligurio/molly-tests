@@ -3,6 +3,7 @@ local net_box = require('net.box')
 
 local molly = require('molly')
 local gen = molly.gen
+local tests = molly.tests
 local runner = molly.runner
 
 local cur_dir = fio.pathjoin(fio.dirname(debug.sourcedir()), '?.lua')
@@ -74,9 +75,6 @@ g.test_bank = function()
 end
 
 g.test_cas_register = function()
-    local r = cas_register.ops.r
-    local w = cas_register.ops.w
-    local cas = cas_register.ops.cas
     local test_options = {
         create_reports = true,
         threads = 5,
@@ -86,7 +84,7 @@ g.test_cas_register = function()
     }
     local ok, err = runner.run_test({
         client = cas_register.client,
-        generator = gen.cycle(gen.iter({ r, w, cas, })):take(1000),
+        generator = tests.cas_register_gen():take(1000),
     }, test_options)
     t.assert_equals(err, nil)
     t.assert_equals(ok, true)

@@ -1,34 +1,9 @@
 -- Molly client with read, write and CAS operations.
 
-local math = require('math')
 local net_box = require('net.box')
 local molly = require('molly')
 
 local client = molly.client
-
-local function r()
-    return {
-        f = 'read',
-        v = nil,
-    }
-end
-
-local function w()
-    return {
-        f = 'write',
-        v = math.random(1, 10),
-    }
-end
-
-local function cas()
-    return {
-        f = 'cas',
-        v = {
-            math.random(1, 10), -- Old value.
-            math.random(1, 10), -- New value.
-        },
-    }
-end
 
 local space_name = 'register_space'
 
@@ -119,9 +94,4 @@ end
 
 return {
     client = cl,
-    ops = {
-       r = r,
-       w = w,
-       cas = cas,
-    }
 }

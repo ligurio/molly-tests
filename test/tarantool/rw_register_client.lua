@@ -1,22 +1,7 @@
 -- Molly client with read and write operations.
 
-local math = require('math')
 local net_box = require('net.box')
 local molly = require('molly')
-
-local function r()
-    return {
-        f = 'read',
-        v = nil,
-    }
-end
-
-local function w()
-    return {
-        f = 'write',
-        v = math.random(1, 100),
-    }
-end
 
 local space_name = 'rw_register_mc'
 
@@ -83,8 +68,4 @@ end
 
 return {
     client = client,
-    ops = {
-       r = r,
-       w = w,
-    }
 }
