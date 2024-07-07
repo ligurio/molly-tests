@@ -20,6 +20,11 @@ jobs:
         with:
           tarantool-version: "2.10"
 
+      - name: Setup tt
+        run: |
+          curl -L https://tarantool.io/release/3/installer.sh | bash
+          sudo apt-get -y install tt
+
       - name: Setup dependencies
         run: make deps
 
