@@ -5,9 +5,9 @@ tests based on [Molly](https://github.com/ligurio/molly) library.
 ```sh
 $ git clone https://github.com/ligurio/molly-tests
 $ cd molly-tests
-$ luarocks --local install --server=https://luarocks.org/dev molly
-$ tarantoolctl rocks install luatest
-$ PATH=$PATH:$(tarantoolctl rocks config deploy_bin_dir)
+$ tt rocks install --server=https://luarocks.org/dev molly
+$ tt rocks install luatest
+$ PATH=$PATH:$(tt rocks config deploy_bin_dir)
 $ luatest -v tarantool.tarantool.test_cas_register
 $
 $ sudo apt install default-jre
