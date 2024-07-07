@@ -8,7 +8,14 @@ $ cd molly-tests
 $ tt rocks install --server=https://luarocks.org/dev molly
 $ tt rocks install luatest
 $ PATH=$PATH:$(tt rocks config deploy_bin_dir)
-$ luatest -v tarantool.tarantool.test_cas_register
+$ luatest -v tarantool.tarantool
+Tarantool version is 2.11.3-0-gf933f77904
+Running with --shuffle group:1213
+Started on Sun Jul  7 19:09:37 2024
+    tarantool.tarantool.test_cas_register ... (0.220s) Ok
+    tarantool.tarantool.test_bank ... (0.218s) Ok
+=========================================================
+Ran 2 tests in 0.440 seconds, 2 succeeded, 0 failed
 $
 $ sudo apt install default-jre
 $ java --version
