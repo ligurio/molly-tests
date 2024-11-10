@@ -1,5 +1,7 @@
 ## Molly tests
 
+[![Static analysis](https://github.com/ligurio/molly-tests/actions/workflows/check.yaml/badge.svg)](https://github.com/ligurio/molly-tests/actions/workflows/check.yaml)
+
 tests based on [Molly](https://github.com/ligurio/molly) library.
 
 ```sh
