@@ -1,3 +1,5 @@
+max_comment_line_length = 121
+
 globals = {
     "box",
     "checkers",
@@ -15,6 +17,8 @@ ignore = {
     "143/table",
     -- Unused argument <self>.
     "212/self",
+    -- Unused variable with `_` prefix.
+    "212/_.*",
 }
 
 include_files = {
