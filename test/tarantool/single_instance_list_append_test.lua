@@ -1,10 +1,8 @@
 local fio = require('fio')
 local log = require('log')
-local math = require('math')
 local molly = require('molly')
 
 local runner = molly.runner
-local client = molly.client
 local tests = molly.tests
 
 log.info('Tarantool version:', require('tarantool').version)
@@ -69,17 +67,24 @@ end
 
 tarantool_list_append.setup = function(self)
     assert_ping(self.conn)
-    if self.conn.space[SPACE_NAME] then
-        return
-    end
+    -- if self.conn.space[SPACE_NAME] then
+    --     return
+    -- end
+    -- local space = self.conn.schema.create_space(SPACE_NAME)
+    -- assert(space ~= nil)
+    -- space:format({
+    --     { 'key', type = 'number' },
+    --     { 'list', type = 'array' },
+    -- })
+    -- space:create_index('pk')
 
-    local space = self.conn.schema.create_space(SPACE_NAME)
-    assert(space ~= nil)
-    space:format({
+    pcall(self.conn.schema.create_space, SPACE_NAME)
+    pcall(self.conn.space[SPACE_NAME].format, self.conn.space[SPACE_NAME], {
         { 'key', type = 'number' },
         { 'list', type = 'array' },
     })
-    space:create_index('pk')
+    pcall(self.conn.space[SPACE_NAME].create_index, self.conn.space[SPACE_NAME], 'pk')
+
     return true
 end
 
@@ -88,22 +93,38 @@ local IDX_MOP_KEY = 2
 local IDX_MOP_VAL = 3
 
 tarantool_list_append.invoke = function(self, op)
-    local mop = op.value[1] -- TODO: Support more than one mop in operation.
-    local mop_key = mop[IDX_MOP_KEY]
-    local type = 'ok'
-    if mop[IDX_MOP_TYPE] == 'r' then
-        local space = self.conn.space[SPACE_NAME]
-        mop[IDX_MOP_VAL] = space:select(mop_key, {timeout = 5, limit = 1})
-    elseif mop[IDX_MOP_TYPE] == 'append' then
-        local space = self.conn.space[SPACE_NAME]
-		space:update(mop_key, {{'!', '[2][1]', mop[IDX_MOP_VAL]}})
+    local op_status = 'ok'
+    local res = table.copy(op.value)
+    local space = self.conn.space[SPACE_NAME]
+    for mop_idx, mop in ipairs(op.value) do
+        local mop_key = mop[IDX_MOP_KEY]
+        local mop_type = mop[IDX_MOP_TYPE]
+        if mop_type == 'r' then
+            local tuple = space:get(mop_key)
+            if tuple then
+                res[mop_idx][IDX_MOP_VAL] = tuple[2]
+			else
+                res[mop_idx][IDX_MOP_VAL] = box.NULL
+            end
+        elseif mop_type == 'append' then
+            local mop_value = mop[IDX_MOP_VAL]
+			-- FIXME: https://github.com/tarantool/tarantool/issues/10788.
+			-- space:upsert({mop_key, {mop_value}}, {{'!', '[2][1]', mop_value}})
+			local tuple = space:get(mop_key)
+			local list = {}
+			if tuple then
+			    list = table.copy(tuple[2])
+			end
+			table.insert(list, mop_value)
+			space:upsert({mop_key, list}, {{'=', 2, list}})
+        end
     end
 
     return {
-        value = { mop },
+        value = res,
         f = op.f,
         process = op.process,
-        type = type,
+        type = op_status,
     }
 end
 
@@ -131,7 +152,7 @@ local ok, err = runner.run_test({
         min_txn_len = MIN_TXN_LEN,
         max_txn_len = MAX_TXN_LEN,
         max_writes_per_key = MAX_WRITES_PER_KEY,
-	}):take(100),
+	}):take(150),
 }, test_options)
 
 if err then
